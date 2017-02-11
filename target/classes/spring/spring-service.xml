@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd ">
+    <!--扫描service包下所有使用注解的类型-->
+    <context:component-scan base-package="org.seckill.service"/>
+    <!--
+    声明式事务目的在于解脱繁琐的关于事务的代码，
+       在实际的开发中，不需要关心事务的开启、提交、回滚、关闭等等，而是直接交由第三方框架托管，比如spring。
+       第二中方法：tx:advice+aop命名空间（一次配置永久生效）
+       第三中方法：@Transactional（注解控制）
+    本例推荐使用第三种基于注解的声明式事务的方法，这种方式的优点在于，当看到@Transcation注解的时候知道这是一个与事务有关的方法，此时就会自觉遵守一些关于事务开发的规范，有利于程序的进一步维护。
+    Spring在抛出运行期异常时会回滚事务，两点注意：
+1 非运行期异常时要注意，防止出现部分成功部分失败的情况（所以自己封装异常时，在需要的地方要implements RuntimeException）。
+2 小心使用try-catch：被try-catch块包裹起来的异常Spring也是感觉不到的。
+-->
+    <!-- 配置事务管理器  mybatis使用jdbc的事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 配置基于注解的声明式事务-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
